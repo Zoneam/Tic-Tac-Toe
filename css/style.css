@@ -1,0 +1,23 @@
+    td {
+        border: 3px solid grey;
+        height: 200px;
+        width: 200px;
+    }
+
+    button {
+        color: blue;
+        font-size: 35px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+  
+    .user-input-X, .user-input-O{
+        color: blue;
+        font-size: 160px;
+        text-align: center;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 52px;
+    }
