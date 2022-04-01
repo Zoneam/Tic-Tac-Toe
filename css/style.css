@@ -1,8 +1,4 @@
-    td {
-        border: 3px solid grey;
-        height: 200px;
-        width: 200px;
-    }
+
 
     button {
         color: blue;
@@ -13,7 +9,7 @@
   
     .user-input-X, .user-input-O{
         color: blue;
-        font-size: 160px;
+        font-size: 100px;
         text-align: center;
     }
 
@@ -25,3 +21,43 @@
     .disabled {
         pointer-events: none;
     }
+
+    td {
+        height: 200px;
+        width: 200px;
+      }
+      
+    td div {
+        margin: 0 auto;
+        /* height: 50px;
+        width: 50px; */
+
+      }
+      
+    tr td:nth-child(2) {
+        border-left: 4px dashed grey;
+        border-right: 4px dashed grey;
+      }
+      
+    tr:nth-child(2) td {
+        border-top: 4px dashed grey;
+        border-bottom: 4px dashed grey;
+      }
+      
+
+html, body {
+    height: 100vh;
+    margin: 0;
+  }
+  
+  * {
+    box-sizing: border-box;
+    font-family: helvetica;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
