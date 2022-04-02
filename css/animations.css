@@ -1,0 +1,66 @@
+.text-color
+{
+  background-image: radial-gradient(
+    #1c0c54 0%,
+    #6526a9 30%,
+    #ff0055 60%,
+    #fff700 100%
+  );
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  font-size: 200px;
+  background-size: 200%;
+  animation: textclip 1s linear infinite,textclip 1s linear infinite, fade-in 0.3s 0.1s forwards cubic-bezier(0.11, 0, 0.5, 0);
+}
+
+.comp-move{
+    opacity: 0;
+    filter: blur(5px);
+}
+
+.h1-text{
+    font-size: 30px;
+}
+
+.hide {
+    opacity: 1;
+    filter: blur(0px);
+    animation: fade-out 1s 0.1s forwards cubic-bezier(0.12, 0, 0.4, 0);
+  }
+
+.winner {
+    animation: flip 5s infinite;
+  }
+
+  
+@keyframes flip {
+    100%, 50% {
+      transform: rotateZ(360deg) rotateY(360deg);
+    }
+}
+
+@keyframes hide {
+    100%, 10% {
+      transform: scale(1, 0);
+    }
+}
+
+@keyframes textclip {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes fade-out {
+    100% {
+      opacity: 0;
+      filter: blur(100px);
+    }
+  }
+  
+@keyframes fade-in {
+    100% {
+      opacity: 1;
+      filter: blur(0px);
+    }
+  }

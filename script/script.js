@@ -51,7 +51,6 @@ function gameStart() {
     tds.forEach(td => {
         td.addEventListener('click', e => {
             clickTracker(e);
-            checkForWins();
             displayWinner(tds);
         }, { once: true }); // To Run only once
     });
@@ -66,16 +65,20 @@ const clickTracker = (e) => {
 
             xArr.push(inputSlot);
             slotTracker[inputSlot] = parseInt(inputSlot); // ['-','1','-','-','4','-','-','7','-',]
-            e.target.innerHTML = '<div class="user-input-X">X</div>';
+            e.target.innerHTML = '<div class="user-input-X text-color">X</div>';
             
     for (let i = 0; i < slotTracker.length; i++){
         if(slotTracker[i] === "-"){
             emptyIndexesArray.push(i); // keeping track of which slots are still empty so computer can take turn
         };
     };
+    // checking for winner, if winner computer will not make next move
+    checkForWins();
     // Generating random number from our empty slot array
+    // AI will go here compThink()
+    console.log(emptyIndexesArray)
     computerMoveIndex = emptyIndexesArray[Math.floor(Math.random()*emptyIndexesArray.length)];
-    if (emptyIndexesArray.length > 1) {
+    if (emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
         // Keeping track of Computer moves
@@ -84,8 +87,9 @@ const clickTracker = (e) => {
         slotTracker[computerMoveIndex] = computerMoveIndex;
         // selecting td slot that computer took and adding O and class disabled 
         let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`);
-        tdTarget.innerHTML = '<div class="user-input-O">O</div>';
+        tdTarget.innerHTML = '<div class="user-input-O text-color comp-move">O</div>';
         tdTarget.classList.add('disabled');
+        checkForWins();
     };
 };
 
@@ -98,6 +102,7 @@ const checkForWins = () => {
         })) {
             winArray = winningSlots[i]; // winning combination will be assigned here ['1','4','7']
             xScore.textContent = parseInt(xScore.textContent) + 1; // adding to scoreboard
+            console.log(xScore)
             winner = 'X'; // tracking who is the winner
         };
         if (winningSlot.every(el => {
@@ -113,10 +118,14 @@ const checkForWins = () => {
 // Displaying Winner
 const displayWinner = (tds) => { // tds are passed as argument 
        if(winner){
-           tds.forEach (td => {
+           tds.forEach(td => {
+               console.log(td.id)
                td.classList.add('disabled');
                if (winArray.includes(td.id[td.id.length - 1])) {
-                   td.classList.add('winner');
+                   td.querySelector('div').classList.replace('comp-move', 'winner');
+                   td.querySelector('div').classList.add('winner');
+               } else {
+                td.querySelector('div')?.classList.add('hide');
                };
            });
            title.textContent = (`${winner} won in ${winner === 'X' ? xArr.length : oArr.length} steps!`);
