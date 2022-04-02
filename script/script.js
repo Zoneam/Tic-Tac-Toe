@@ -29,8 +29,8 @@ let gameTable = document.querySelector('table');
 let title = document.querySelector('h1');
 let xScore = document.querySelector('#x-score');
 let oScore = document.querySelector('#o-score');
-let turn, xArr, oArr, winner;
-let slotTracker ;
+let turn, xArr, oArr, winner, winArray,slotTracker;
+
 document.querySelector('#start').addEventListener('click', GameStart);
 
 //Start and Restart the Game
@@ -55,7 +55,7 @@ function GameStart() {
 // Taking Turns
 const clickTracker = (e) => {
     let inputSlot = e.target.id[e.target.id.length-1];
-    let emptyIndexesArray =[];
+    let emptyIndexesArray = [];
     let computerMoveIndex;
         if(turn === 'X') {
             xArr.push(inputSlot);
@@ -68,16 +68,14 @@ const clickTracker = (e) => {
                 emptyIndexesArray.push(i);
                 }
             }
-
             computerMoveIndex = emptyIndexesArray[Math.floor(Math.random()*emptyIndexesArray.length)];
-
             if(emptyIndexesArray.length > 1) {
                 emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
-                console.log("emptyIndexesarray",emptyIndexesArray, '  ', emptyIndexesArray.length);
                 oArr.push(String(computerMoveIndex));
                 slotTracker[computerMoveIndex] = computerMoveIndex;
                 let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`);
                 tdTarget.innerHTML = '<div class="user-input-O">O</div>';
+                tdTarget.classList.add('disabled')
             }
             turn = "X";
         };
@@ -85,22 +83,23 @@ const clickTracker = (e) => {
 
 // Checking for winners
 const checkForWins = () => {
-    console.log("xArr:", xArr);
-    console.log("oArr:", oArr);
-    winningSlots.forEach((winningSlot) => {
-        if( winningSlot.every(el => {
+    winArray = [];
+    winningSlots.forEach((winningSlot, i) => {
+        if (winningSlot.every(el => {
             return xArr.includes(el);
         })) {
             winner = 'X';
+            winArray = winningSlots[i];
             xScore.textContent = parseInt(xScore.textContent) + 1;
             }
-        if( winningSlot.every(el => {
+        if (winningSlot.every(el => {
             return oArr.includes(el);
         })) {
+            winArray = winningSlots[i];
             oScore.textContent = parseInt(oScore.textContent) + 1;
             winner = 'O';
         }
-     });
+    });
 };
 
 // Displaying Winner
@@ -108,9 +107,13 @@ const displayWinner = (tds) => {
        if(winner){
            tds.forEach (td => {
                td.classList.add('disabled');
+               if (winArray.includes(td.id[td.id.length - 1])) {
+                td.classList.add('winner')
+                }
            });
            title.textContent = (`${winner} won in ${winner === 'X'?xArr.length:oArr.length} steps!`);
-       } else     if (xArr.length + oArr.length === 9) {
+       } else if (xArr.length + oArr.length === 9) {
+           document.querySelector('tbody').classList.add('winner');
         title.textContent = ("It's a Tie !");
     } else title.textContent = ("There's no winner yet");
     
