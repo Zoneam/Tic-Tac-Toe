@@ -76,22 +76,67 @@ const clickTracker = (e) => {
     checkForWins();
     // Generating random number from our empty slot array
     // AI will go here compThink()
-    console.log(emptyIndexesArray)
-    computerMoveIndex = emptyIndexesArray[Math.floor(Math.random()*emptyIndexesArray.length)];
-    if (emptyIndexesArray.length > 1 && !winner ) {
+    computerMoveIndex = compThink(xArr, oArr, emptyIndexesArray);
+    if ( emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
         // Keeping track of Computer moves
-        oArr.push(String(computerMoveIndex));
+        // oArr.push(String(computerMoveIndex));
         // pushing move computer took to our empty slot tracker
         slotTracker[computerMoveIndex] = computerMoveIndex;
-        // selecting td slot that computer took and adding O and class disabled 
+        // selecting td slot that computer took and adding O and class disabled
+        console.log("computerMoveIndex",computerMoveIndex)
         let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`);
         tdTarget.innerHTML = '<div class="user-input-O text-color comp-move">O</div>';
         tdTarget.classList.add('disabled');
         checkForWins();
+    } else if (!emptyIndexesArray.length) {
+        checkForWins();
     };
 };
+
+const compThink = (xArr, oArr, emptyIndexesArray) => {
+    let matchingCount
+    let move = null;
+    console.log("inside compThink")
+    // Check if AI can Win { took me 4 hours }
+    for (let i = 0; i < winningSlots.length; i++){
+        matchingCount = 0;
+        for (let j = 0; j < 3; j++) {
+            if (oArr.includes(winningSlots[i][j])) {
+                matchingCount++;
+                if (matchingCount > 1) {
+                    console.log("found winning array", winningSlots[i]);
+                    move = winningSlots[i].filter((el) => {
+                        if(!oArr.includes(el)){
+                            return el;
+                        }
+                      });
+                    move = parseInt(move[0]);
+                };
+            };
+        }; 
+    };
+    console.log("move Before", move);
+    console.log("emptyIndexesArray", emptyIndexesArray)
+    if (emptyIndexesArray.length) {
+        if (!emptyIndexesArray.includes(parseInt(move))) {
+            console.log("inside ")
+            move = (emptyIndexesArray[Math.floor(Math.random() * emptyIndexesArray.length)]);
+        };
+        console.log("move", move, typeof (move));
+        oArr.push(String(move));
+        return move;
+    } else return 0;
+    
+    // Check if User will win
+    // ------------------------------------------
+
+
+
+    
+}
+
 
 // Checking for winners
 const checkForWins = () => {
@@ -102,7 +147,6 @@ const checkForWins = () => {
         })) {
             winArray = winningSlots[i]; // winning combination will be assigned here ['1','4','7']
             xScore.textContent = parseInt(xScore.textContent) + 1; // adding to scoreboard
-            console.log(xScore)
             winner = 'X'; // tracking who is the winner
         };
         if (winningSlot.every(el => {
@@ -119,7 +163,6 @@ const checkForWins = () => {
 const displayWinner = (tds) => { // tds are passed as argument 
        if(winner){
            tds.forEach(td => {
-               console.log(td.id)
                td.classList.add('disabled');
                if (winArray.includes(td.id[td.id.length - 1])) {
                    td.querySelector('div').classList.replace('comp-move', 'winner');
