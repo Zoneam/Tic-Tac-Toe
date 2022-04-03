@@ -63,13 +63,13 @@ const clickTracker = (e) => {
     let emptyIndexesArray = [];
     let computerMoveIndex;
 
-            xArr.push(inputSlot);
-            slotTracker[inputSlot] = parseInt(inputSlot); // ['-','1','-','-','4','-','-','7','-',]
+            xArr.push(String(inputSlot));
+            slotTracker[inputSlot] = inputSlot; // ['-','1','-','-','4','-','-','7','-',]
             e.target.innerHTML = '<div class="user-input-X text-color">X</div>';
             
     for (let i = 0; i < slotTracker.length; i++){
         if(slotTracker[i] === "-"){
-            emptyIndexesArray.push(i); // keeping track of which slots are still empty so computer can take turn
+            emptyIndexesArray.push(String(i)); // keeping track of which slots are still empty so computer can take turn
         };
     };
     // checking for winner, if winner computer will not make next move
@@ -79,12 +79,13 @@ const clickTracker = (e) => {
     computerMoveIndex = compThink(xArr, oArr, emptyIndexesArray);
     if ( emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
+        
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
+        // console.log("emptyIndexesArray",emptyIndexesArray)
         // Keeping track of Computer moves
         // pushing move computer took to our empty slot tracker
         slotTracker[computerMoveIndex] = computerMoveIndex;
         // selecting td slot that computer took and adding O and class disabled
-        console.log("computerMoveIndex",computerMoveIndex)
         let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`);
         tdTarget.innerHTML = '<div class="user-input-O text-color comp-move">O</div>';
         tdTarget.classList.add('disabled');
@@ -94,25 +95,37 @@ const clickTracker = (e) => {
     };
 };
 
+
+//  -------------- AI BRAIN --------------
 const compThink = (xArr, oArr, emptyIndexesArray) => {
     let matchingCount
     let move = null;
+    let winningMove = null;
     let blockingMove = null;
-    console.log("inside compThink")
-    // Check if AI can Win { took me 4 hours }
+    console.log("inside compThink-------------------------------------")
+
+    // Check if AI can Win { TOOK MY SATURDAY AWAY }
     for (let i = 0; i < winningSlots.length; i++){
         matchingCount = 0;
         for (let j = 0; j < 3; j++) {
             if (oArr.includes(winningSlots[i][j])) {
                 matchingCount++;
                 if (matchingCount > 1) {
-                    console.log("found winning array", winningSlots[i]);
-                    move = winningSlots[i].filter((el) => {
-                        if(!oArr.includes(el)){
-                            return el;
+                    console.log("winning move exists =====", winningMove);
+                    if (!winningMove) {
+                        winningMove = winningSlots[i].filter((el) => {
+                        if(!oArr.includes(el) && !xArr.includes(el)){
+                            return el ;
                         }
-                      });
-                    move = parseInt(move[0]);
+                    });
+                    }
+                    console.log("===============")
+                    console.log("move" , winningMove[0])
+                    console.log("===============")
+                    if (emptyIndexesArray.includes(winningMove[0])) {
+                        console.log("====inside if=====")
+                        winningMove = winningMove[0];
+                    } else winningMove = null;
                 };
             };
         }; 
@@ -126,12 +139,21 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
                 matchingCount++;
                 if (matchingCount > 1) {
                     console.log("found blocking array", winningSlots[i]);
-                    blockingMove = winningSlots[i].filter((el) => {
-                        if(!xArr.includes(el)){
-                            return el;
-                        }
-                      });
-                      blockingMove = parseInt(blockingMove[0]);
+                    // console.log("Xarr: ", xArr)
+                    console.log("blockingMove before =====>>",blockingMove)
+                    if (!blockingMove) {
+                        console.log("inside my iFFFFFFFFFFFFFFFFFFFFFFFF")
+                        blockingMove = winningSlots[i].filter((el) => {
+                            if (!xArr.includes(el) && !oArr.includes(el)) {
+                                return el;
+                            };
+                        });
+                    };
+                    console.log("blockingMove===>",blockingMove[0])
+                    if (emptyIndexesArray.includes(blockingMove[0])) {
+                        blockingMove = blockingMove[0];
+                        console.log("Blocking Move: ", blockingMove[0])
+                    } else blockingMove = null;
                 };
             };
         }; 
@@ -139,11 +161,20 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
 
     console.log("Blocking move", blockingMove);
     console.log("move Before", move);
-    console.log("emptyIndexesArray", emptyIndexesArray)
-    move = move?move:blockingMove
-
+    // console.log("emptyIndexesArray", emptyIndexesArray)
+    if (winningMove) {
+        move = winningMove;
+        console.log("WINNING")
+    } else if (blockingMove) {
+        move = blockingMove;
+        console.log("BLOCKING")
+    } else move = null;
+    
+    console.log("move is ===> ", typeof move)
+    console.log("move after check", move);
+    console.log("emptyIndexesArray",emptyIndexesArray)
     if (emptyIndexesArray.length) {
-        if (!emptyIndexesArray.includes(parseInt(move))) {
+        if (!emptyIndexesArray.includes(move)) {
             console.log("inside ")
             move = (emptyIndexesArray[Math.floor(Math.random() * emptyIndexesArray.length)]);
         };
@@ -151,13 +182,6 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
         oArr.push(String(move));
         return move;
     } else return 0;
-    
-    // Check if User will win
-    // ------------------------------------------
-
-
-
-    
 }
 
 
