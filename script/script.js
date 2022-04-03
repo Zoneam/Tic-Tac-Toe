@@ -81,7 +81,6 @@ const clickTracker = (e) => {
         // Removing from our empty index array the move computer took
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
         // Keeping track of Computer moves
-        // oArr.push(String(computerMoveIndex));
         // pushing move computer took to our empty slot tracker
         slotTracker[computerMoveIndex] = computerMoveIndex;
         // selecting td slot that computer took and adding O and class disabled
@@ -98,6 +97,7 @@ const clickTracker = (e) => {
 const compThink = (xArr, oArr, emptyIndexesArray) => {
     let matchingCount
     let move = null;
+    let blockingMove = null;
     console.log("inside compThink")
     // Check if AI can Win { took me 4 hours }
     for (let i = 0; i < winningSlots.length; i++){
@@ -117,8 +117,31 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
             };
         }; 
     };
+
+    //----------- finding blocking move
+    for (let i = 0; i < winningSlots.length; i++){
+        matchingCount = 0;
+        for (let j = 0; j < 3; j++) {
+            if (xArr.includes(winningSlots[i][j])) {
+                matchingCount++;
+                if (matchingCount > 1) {
+                    console.log("found blocking array", winningSlots[i]);
+                    blockingMove = winningSlots[i].filter((el) => {
+                        if(!xArr.includes(el)){
+                            return el;
+                        }
+                      });
+                      blockingMove = parseInt(blockingMove[0]);
+                };
+            };
+        }; 
+    };
+
+    console.log("Blocking move", blockingMove);
     console.log("move Before", move);
     console.log("emptyIndexesArray", emptyIndexesArray)
+    move = move?move:blockingMove
+
     if (emptyIndexesArray.length) {
         if (!emptyIndexesArray.includes(parseInt(move))) {
             console.log("inside ")
