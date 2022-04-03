@@ -30,7 +30,8 @@ let gameTable = document.querySelector('table');
 let title = document.querySelector('h1');
 let xScore = document.querySelector('#x-score');
 let oScore = document.querySelector('#o-score');
-let turn, xArr, oArr, winner, winArray,slotTracker;
+let turn, xArr, oArr, winner, winArray, slotTracker;
+let hardness = 'easy';
 // Restart Button setup
 document.querySelector('#start').addEventListener('click', gameStart);
 
@@ -79,9 +80,7 @@ const clickTracker = (e) => {
     computerMoveIndex = compThink(xArr, oArr, emptyIndexesArray);
     if ( emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
-        
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
-        // console.log("emptyIndexesArray",emptyIndexesArray)
         // Keeping track of Computer moves
         // pushing move computer took to our empty slot tracker
         slotTracker[computerMoveIndex] = computerMoveIndex;
@@ -90,11 +89,12 @@ const clickTracker = (e) => {
         tdTarget.innerHTML = '<div class="user-input-O text-color comp-move">O</div>';
         tdTarget.classList.add('disabled');
         checkForWins();
-    } else if (!emptyIndexesArray.length) {
+    }
+    else
+        if (!emptyIndexesArray.length) {
         checkForWins();
     };
 };
-
 
 //  -------------- AI BRAIN --------------
 const compThink = (xArr, oArr, emptyIndexesArray) => {
@@ -102,88 +102,67 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
     let move = null;
     let winningMove = null;
     let blockingMove = null;
-    console.log("inside compThink-------------------------------------")
-
+    hardness = document.querySelector('input[name="hardness"]:checked').value; // Setting hard or easy
     // Check if AI can Win { TOOK MY SATURDAY AWAY }
-    for (let i = 0; i < winningSlots.length; i++){
-        matchingCount = 0;
-        for (let j = 0; j < 3; j++) {
-            if (oArr.includes(winningSlots[i][j])) {
-                matchingCount++;
-                if (matchingCount > 1) {
-                    console.log("winning move exists =====", winningMove);
-                    if (!winningMove) {
-                        winningMove = winningSlots[i].filter((el) => {
-                        if(!oArr.includes(el) && !xArr.includes(el)){
-                            return el ;
-                        }
-                    });
-                    }
-                    console.log("===============")
-                    console.log("move" , winningMove[0])
-                    console.log("===============")
-                    if (emptyIndexesArray.includes(winningMove[0])) {
-                        console.log("====inside if=====")
-                        winningMove = winningMove[0];
-                    } else winningMove = null;
-                };
-            };
-        }; 
-    };
-
-    //----------- finding blocking move
-    for (let i = 0; i < winningSlots.length; i++){
-        matchingCount = 0;
-        for (let j = 0; j < 3; j++) {
-            if (xArr.includes(winningSlots[i][j])) {
-                matchingCount++;
-                if (matchingCount > 1) {
-                    console.log("found blocking array", winningSlots[i]);
-                    // console.log("Xarr: ", xArr)
-                    console.log("blockingMove before =====>>",blockingMove)
-                    if (!blockingMove) {
-                        console.log("inside my iFFFFFFFFFFFFFFFFFFFFFFFF")
-                        blockingMove = winningSlots[i].filter((el) => {
-                            if (!xArr.includes(el) && !oArr.includes(el)) {
-                                return el;
-                            };
-                        });
+    if (hardness !== "easy") {  // making easy
+        for (let i = 0; i < winningSlots.length; i++) {
+            matchingCount = 0;
+            for (let j = 0; j < 3; j++) {
+                if (oArr.includes(winningSlots[i][j])) {
+                    matchingCount++;
+                    if (matchingCount > 1) {
+                        if (!winningMove) {
+                            winningMove = winningSlots[i].filter((el) => {
+                                if (!oArr.includes(el) && !xArr.includes(el)) {
+                                    return el;
+                                };
+                            });
+                        };
+                        if (emptyIndexesArray.includes(winningMove[0])) {
+                            winningMove = winningMove[0];
+                        } else winningMove = null;
                     };
-                    console.log("blockingMove===>",blockingMove[0])
-                    if (emptyIndexesArray.includes(blockingMove[0])) {
-                        blockingMove = blockingMove[0];
-                        console.log("Blocking Move: ", blockingMove[0])
-                    } else blockingMove = null;
                 };
             };
-        }; 
-    };
-
-    console.log("Blocking move", blockingMove);
-    console.log("move Before", move);
-    // console.log("emptyIndexesArray", emptyIndexesArray)
+        };
+        //----------- finding blocking move
+        for (let i = 0; i < winningSlots.length; i++) {
+            matchingCount = 0;
+            for (let j = 0; j < 3; j++) {
+                if (xArr.includes(winningSlots[i][j])) {
+                    matchingCount++;
+                    if (matchingCount > 1) {
+                        if (!blockingMove) {
+                            blockingMove = winningSlots[i].filter((el) => {
+                                if (!xArr.includes(el) && !oArr.includes(el)) {
+                                    return el;
+                                };
+                            });
+                        };
+                        if (emptyIndexesArray.includes(blockingMove[0])) {
+                            blockingMove = blockingMove[0];
+                        } else blockingMove = null;
+                    };
+                };
+            };
+        };
+    }
     if (winningMove) {
         move = winningMove;
-        console.log("WINNING")
     } else if (blockingMove) {
         move = blockingMove;
-        console.log("BLOCKING")
     } else move = null;
-    
-    console.log("move is ===> ", typeof move)
-    console.log("move after check", move);
-    console.log("emptyIndexesArray",emptyIndexesArray)
+
     if (emptyIndexesArray.length) {
         if (!emptyIndexesArray.includes(move)) {
-            console.log("inside ")
-            move = (emptyIndexesArray[Math.floor(Math.random() * emptyIndexesArray.length)]);
+            if (xArr.length === 1 && !xArr.includes("4") && hardness === "hard") { // Making it HARDDDDD
+                move = 4;
+            } else move = (emptyIndexesArray[Math.floor(Math.random() * emptyIndexesArray.length)]);
         };
-        console.log("move", move, typeof (move));
         oArr.push(String(move));
         return move;
     } else return 0;
 }
-
 
 // Checking for winners
 const checkForWins = () => {
@@ -199,6 +178,7 @@ const checkForWins = () => {
         if (winningSlot.every(el => {
             return oArr.includes(el); // Will return true or false if our oArr contains one of winning arrays
         })) {
+            console.log()
             winArray = winningSlots[i]; // or winning combination will be assigned here ['1','4','7']
             oScore.textContent = parseInt(oScore.textContent) + 1; // adding to scoreboard
             winner = 'O'; // tracking who is the winner
@@ -218,6 +198,7 @@ const displayWinner = (tds) => { // tds are passed as argument
                 td.querySelector('div')?.classList.add('hide');
                };
            });
+        //    document.querySelector('#board').addEventListener('click', gameStart);
            title.textContent = (`${winner} won in ${winner === 'X' ? xArr.length : oArr.length} steps!`);
        } else if (xArr.length + oArr.length === 9) {
            document.querySelector('tbody').classList.add('winner');
