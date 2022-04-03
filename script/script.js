@@ -30,6 +30,7 @@ let gameTable = document.querySelector('table');
 let title = document.querySelector('h1');
 let xScore = document.querySelector('#x-score');
 let oScore = document.querySelector('#o-score');
+let tie = document.querySelector('#tie');
 let turn, xArr, oArr, winner, winArray, slotTracker;
 let hardness = 'easy';
 // Restart Button setup
@@ -201,6 +202,7 @@ const displayWinner = (tds) => { // tds are passed as argument
         //    document.querySelector('#board').addEventListener('click', gameStart);
            title.textContent = (`${winner} won in ${winner === 'X' ? xArr.length : oArr.length} steps!`);
        } else if (xArr.length + oArr.length === 9) {
+           tie.textContent = parseInt(tie.textContent) + 1;
            document.querySelector('tbody').classList.add('winner');
         title.textContent = ("It's a Tie !");
     } else title.textContent = ("There's no winner yet");
