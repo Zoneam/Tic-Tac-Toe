@@ -6,6 +6,10 @@
     #ff0055 60%,
     #fff700 100%
   );
+  -webkit-user-select: none; /* Safari */        
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+/Edge */
+user-select: none; /* Standard */
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   font-size: 200px;
@@ -19,8 +23,12 @@
 }
 
 .h1-text{
-    font-size: 40px;
-    margin-top: 10px;
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  font-size: 40px;
+  margin-top: 10px;
 }
 
 .hide {
