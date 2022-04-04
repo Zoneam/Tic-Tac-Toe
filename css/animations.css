@@ -40,13 +40,18 @@
   }
   
 #scoreboard{
+  display:flex;
+  align-content: left;
+  align-self: center;
   margin-top: 15px;
   max-width: fit-content;
   border-radius: 40px;
-  border-style: dashed;
   border-width: 3px;
-  
+  box-shadow: rgb(60 64 67 / 100%) 0px 0px 14px 0px, rgb(60 64 67 / 35%) 0px 0px 0px 4px;
+
 }
+
+
 
 @keyframes flip {
     100%, 50% {
