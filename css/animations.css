@@ -19,7 +19,8 @@
 }
 
 .h1-text{
-    font-size: 30px;
+    font-size: 40px;
+    margin-top: 10px;
 }
 
 .hide {
@@ -41,9 +42,9 @@
 #scoreboard{
   margin-top: 15px;
   max-width: fit-content;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 5px;
+  border-radius: 40px;
+  border-style: dashed;
+  border-width: 3px;
   
 }
 
@@ -92,7 +93,6 @@
 
     #scoreboard {
       display:flex;
-      
       margin-left: 0;
       flex-direction: row;
       align-self: center;

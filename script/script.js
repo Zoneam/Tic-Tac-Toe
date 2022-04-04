@@ -35,77 +35,68 @@ let turn, xArr, oArr, winner, winArray, slotTracker;
 let hardness = 'easy';
 // Restart Button setup
 document.querySelector('#start').addEventListener('click', gameStart);
-
-//Start and Restart the Game
+//--------------------------- Start and Restart the Game -------------------------------------
 function gameStart() {
-    // Game Reset / Start
     // Creating arrey that contains only dashes
-    slotTracker = slotTracker = new Array(9).fill('-');
-    turn = 'X'; // Setting the turn (X always starts first)
+    slotTracker = slotTracker = new Array(9).fill('-'); // ['-','-','-','-','-','-','-','-','-',]
+    turn = 'X'; // Setting the turn (X always starts first for now)
     xArr = [];
     oArr = [];
     winner = '';
-    // Drawing game board
-    gameTable.innerHTML = gameBoard;
-    title.textContent = "There's no winner yet";
+    gameTable.innerHTML = gameBoard; // Drawing game board
+    title.textContent = "There's no winner yet!";
     // Grabbing all tds and appending event listeners preloaded with functions
     let tds = document.querySelectorAll('td');
     tds.forEach(td => {
         td.addEventListener('click', e => {
-            clickTracker(e);
+            clickTracker(e);  // passing event as a argument
             displayWinner(tds);
-        }, { once: true }); // To Run only once
+        }, { once: true }); // To Run click events only once
     });
 };
 
-// click events
+//-------------------------- Click Events --------------------------------------
 const clickTracker = (e) => {
     // Initializing Local Variables
-    let inputSlot = e.target.id[e.target.id.length-1];  // grabbing td ids last character
+    let inputSlot = e.target.id[e.target.id.length - 1];  // grabbing td ids last character
     let emptyIndexesArray = [];
     let computerMoveIndex;
-
-            xArr.push(String(inputSlot));
-            slotTracker[inputSlot] = inputSlot; // ['-','1','-','-','4','-','-','7','-',]
-            e.target.innerHTML = '<div class="user-input-X text-color">X</div>';
+    xArr.push(inputSlot); // when user clicks index of that slot will go into xArr array
+    slotTracker[inputSlot] = inputSlot; // ['-','1','-','-','4','-','-','7','-',]
+    e.target.innerHTML = '<div class="user-input-X text-color">X</div>'; // placing user inputs (X)
             
     for (let i = 0; i < slotTracker.length; i++){
         if(slotTracker[i] === "-"){
             emptyIndexesArray.push(String(i)); // keeping track of which slots are still empty so computer can take turn
         };
     };
-    // checking for winner, if winner computer will not make next move
-    checkForWins();
+    checkForWins(); // checking if user won, if winner computer will not make next move
     // Generating random number from our empty slot array
-    // AI will go here compThink()
-    computerMoveIndex = compThink(xArr, oArr, emptyIndexesArray);
+    // AI will go here useAiBrain()
+    computerMoveIndex = useAiBrain(xArr, oArr, emptyIndexesArray);
+    console.log("computerMoveIndex",computerMoveIndex)
     if ( emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
-        emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1);
+        emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1); // ['0','4','6','8']  once computer takes move that index gets removed
         // Keeping track of Computer moves
         // pushing move computer took to our empty slot tracker
-        slotTracker[computerMoveIndex] = computerMoveIndex;
-        // selecting td slot that computer took and adding O and class disabled
-        let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`);
+        slotTracker[computerMoveIndex] = computerMoveIndex; // ['-','1','3','-','4','5','-','7','-',]
+        let tdTarget = document.querySelector(`#slot-${computerMoveIndex}`); // selecting slot that computer took and adding O and class disabled
         tdTarget.innerHTML = '<div class="user-input-O text-color comp-move">O</div>';
         tdTarget.classList.add('disabled');
-        checkForWins();
-    }
-    else
-        if (!emptyIndexesArray.length) {
-        checkForWins();
+        checkForWins(); // checking if computer won, if winner game will stop
     };
 };
 
 //  -------------- AI BRAIN --------------
-const compThink = (xArr, oArr, emptyIndexesArray) => {
+const useAiBrain = (xArr, oArr, emptyIndexesArray) => {
     let matchingCount
     let move = null;
     let winningMove = null;
     let blockingMove = null;
     hardness = document.querySelector('input[name="hardness"]:checked').value; // Setting hard or easy
-    // Check if AI can Win { TOOK MY SATURDAY AWAY }
-    if (hardness !== "easy") {  // making easy
+    // --------- Check if AI can Win on next move { TOOK MY SATURDAY AWAY } ----------------
+    if (hardness !== "easy") {  // making easy { if easy checked will not check or calculate next move it will be random }
         for (let i = 0; i < winningSlots.length; i++) {
             matchingCount = 0;
             for (let j = 0; j < 3; j++) {
@@ -119,14 +110,17 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
                                 };
                             });
                         };
-                        if (emptyIndexesArray.includes(winningMove[0])) {
+                        if (emptyIndexesArray.includes(winningMove[0])) { // also checking if empty indexes array contains our winning move {meaning the slot is empty}
                             winningMove = winningMove[0];
-                        } else winningMove = null;
+                        } else winningMove = null; // otherwise will return null
                     };
                 };
             };
         };
-        //----------- finding blocking move
+        //----------- Looking for blocking move ---------------
+        // Looping trough winningSlots array and matching user inputed array xArr to winning slots
+        // if atleast 2 numbers match we found blocking move. 
+        // xArr will look like ['0','4','6','8']
         for (let i = 0; i < winningSlots.length; i++) {
             matchingCount = 0;
             for (let j = 0; j < 3; j++) {
@@ -140,20 +134,22 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
                                 };
                             });
                         };
-                        if (emptyIndexesArray.includes(blockingMove[0])) {
-                            blockingMove = blockingMove[0];
-                        } else blockingMove = null;
+                        if (emptyIndexesArray.includes(blockingMove[0])) { // also checking if empty indexes array contains our blocking move {meaning the slot is empty}
+                            blockingMove = blockingMove[0]; // will return blocking move
+                        } else blockingMove = null; // otherwise will return null
                     };
                 };
             };
         };
-    }
+    };
+
+    //  -------------- if wining move found will move with winnin, if blocking is found will block or null
     if (winningMove) {
         move = winningMove;
     } else if (blockingMove) {
         move = blockingMove;
     } else move = null;
-
+    //--------------
     if (emptyIndexesArray.length) {
         if (!emptyIndexesArray.includes(move)) {
             if (xArr.length === 1 && !xArr.includes("4") && hardness === "hard") { // Making it HARDDDDD
@@ -162,8 +158,8 @@ const compThink = (xArr, oArr, emptyIndexesArray) => {
         };
         oArr.push(String(move));
         return move;
-    } else return 0;
-}
+    };
+};
 
 // Checking for winners
 const checkForWins = () => {
@@ -179,7 +175,6 @@ const checkForWins = () => {
         if (winningSlot.every(el => {
             return oArr.includes(el); // Will return true or false if our oArr contains one of winning arrays
         })) {
-            console.log()
             winArray = winningSlots[i]; // or winning combination will be assigned here ['1','4','7']
             oScore.textContent = parseInt(oScore.textContent) + 1; // adding to scoreboard
             winner = 'O'; // tracking who is the winner
@@ -205,7 +200,7 @@ const displayWinner = (tds) => { // tds are passed as argument
            tie.textContent = parseInt(tie.textContent) + 1;
            document.querySelector('tbody').classList.add('winner');
         title.textContent = ("It's a Tie !");
-    } else title.textContent = ("There's no winner yet");
+    } else title.textContent = ("There's no winner yet!");
 };
 
 // initialization

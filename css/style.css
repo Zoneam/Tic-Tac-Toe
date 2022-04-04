@@ -84,7 +84,7 @@ html, body {
     justify-content: center;
   }
   #hardness-picker div {
-    margin: 25px;
+    margin: 10px 25px 0px 25px;
   }
 
 
