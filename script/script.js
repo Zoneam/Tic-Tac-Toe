@@ -31,12 +31,14 @@ let title = document.querySelector('h1');
 let xScore = document.querySelector('#x-score');
 let oScore = document.querySelector('#o-score');
 let tie = document.querySelector('#tie');
+let playAgainButton = document.querySelector('#start');
 let turn, xArr, oArr, winner, winArray, slotTracker;
 let hardness = 'easy';
 // Restart Button setup
-document.querySelector('#start').addEventListener('click', gameStart);
+playAgainButton.addEventListener('click', gameStart);
 //--------------------------- Start and Restart the Game -------------------------------------
 function gameStart() {
+    playAgainButton.hidden = true;
     // Creating arrey that contains only dashes
     slotTracker = slotTracker = new Array(9).fill('-'); // ['-','-','-','-','-','-','-','-','-',]
     turn = 'X'; // Setting the turn (X always starts first for now)
@@ -74,7 +76,6 @@ const clickTracker = (e) => {
     // Generating random number from our empty slot array
     // AI will go here useAiBrain()
     computerMoveIndex = useAiBrain(xArr, oArr, emptyIndexesArray);
-    console.log("computerMoveIndex",computerMoveIndex)
     if ( emptyIndexesArray.length > 1 && !winner ) {
         // Removing from our empty index array the move computer took
         emptyIndexesArray.splice(emptyIndexesArray.indexOf(computerMoveIndex), 1); // ['0','4','6','8']  once computer takes move that index gets removed
@@ -194,12 +195,13 @@ const displayWinner = (tds) => { // tds are passed as argument
                 td.querySelector('div')?.classList.add('hide');
                };
            });
-        //    document.querySelector('#board').addEventListener('click', gameStart);
            title.textContent = (`${winner} won in ${winner === 'X' ? xArr.length : oArr.length} steps!`);
+           playAgainButton.removeAttribute("hidden");
        } else if (xArr.length + oArr.length === 9) {
-           tie.textContent = parseInt(tie.textContent) + 1;
-           document.querySelector('tbody').classList.add('winner');
-        title.textContent = ("It's a Tie !");
+            tie.textContent = parseInt(tie.textContent) + 1;
+            document.querySelector('tbody').classList.add('winner');
+            title.textContent = ("It's a Tie !");
+            playAgainButton.removeAttribute("hidden");
     } else title.textContent = ("There's no winner yet!");
 };
 
