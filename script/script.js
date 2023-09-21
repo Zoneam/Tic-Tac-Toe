@@ -96,9 +96,9 @@ const useAiBrain = (xArr, oArr, emptyIndexesArray) => {
     let winningMove = null;
     let blockingMove = null;
     hardness = document.querySelector('input[name="hardness"]:checked').value; // Setting hard or easy
-    // --------- Check if AI can Win on next move { TOOK MY SATURDAY AWAY } ----------------
+    // --------- Check if AI can Win on next move  ----------------
     if (hardness !== "easy") {  // making easy { if easy checked will not check or calculate next move it will be random }
-        for (let i = 0; i < winningSlots.length; i++) {
+        for (let i = 0; i < winningSlots.length; i++) { // looking for winning move
             matchingCount = 0;
             for (let j = 0; j < 3; j++) {
                 if (oArr.includes(winningSlots[i][j])) {
@@ -144,7 +144,7 @@ const useAiBrain = (xArr, oArr, emptyIndexesArray) => {
         };
     };
 
-    //  -------------- if wining move found will move with winnin, if blocking is found will block or null
+    //  -------------- if wining move found will move with winning move, if blocking is found will block and if not null
     if (winningMove) {
         move = winningMove;
     } else if (blockingMove) {
