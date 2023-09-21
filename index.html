@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: http://ogp.me/ns#">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="AI Tic-Tac-Toe" />
+    <meta name="image" property="og:image" content="./images/screenshot.jpg" />
+    <meta name="author" content="Hayk Mnatsakanyan" />
+    <meta property="og:description" content="AI Tic-Tac-Toe" />
+    <meta property="og:url" content="https://haykmn.com" />
+
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/animations.css">
@@ -19,7 +26,7 @@
     <div id="hardness-picker">
         <div class="radio-div">
             <label for="easy" class="text-color radio-label">Easy</label>
-            <input type="radio" id="easy" name="hardness" value="easy" >
+            <input type="radio" id="easy" name="hardness" value="easy">
         </div>
         <div class="radio-div">
             <label for="normal" class="text-color radio-label">Normal</label>
@@ -28,7 +35,7 @@
         <div class="radio-div">
             <label for="hard" class="text-color radio-label">Hard</label>
             <input type="radio" id="hard" name="hardness" value="hard">
-            
+
         </div>
     </div>
     <label>Who starts first?</label>
@@ -37,9 +44,11 @@
     <option value="computer">Computer</option>
 </select>
 </nav>
+
 <body>
     <h1 class="text-color h1-text">There's no winner yet</h1>
     <table>
     </table>
     <button id="start" hidden>Play Again</button>
+
 </html>
