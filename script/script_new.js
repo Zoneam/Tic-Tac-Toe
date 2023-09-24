@@ -14,7 +14,7 @@ const LOOKUP_TABLE = {
     '1': 'X',
     '-1': 'O',
 };
-// Game board to draw dynamically
+// Game board dynamically
 let gameBoard = `<tr>
                 <td id="slot-0"></td>
                 <td id="slot-1"></td>
@@ -37,24 +37,21 @@ let oScore = document.querySelector('#o-score');
 let tie = document.querySelector('#tie');
 let gameTable = document.querySelector('table');               
 let playAgainButton = document.querySelector('#start');
-let turn, xArr, oArr, winner, winArray, slotTracker, board;
+let turn, winner, board;
 let hardness = 'easy';
 playAgainButton.addEventListener('click', initialize);
-document.querySelector('#starter').addEventListener('change', function() {
-    if (this.value === "computer") {
-        initialize();
-    }
-});
+let starter = "player";
+
 
 //--------------------------- Start and Restart the Game -------------------------------------
 function initialize() {
+    starter = starter === "player" ? "computer" : "player";
     board = [null, null, null, null, null, null, null, null, null];
     winner = null;
     gameTable.innerHTML = gameBoard; // Drawing game board
     gameTable.addEventListener('click', handleMove);
-
     // Check who starts first
-    let starter = document.querySelector('#starter').value;
+
     if (starter === "player") {
         turn = 1;
     } else {
@@ -69,10 +66,6 @@ function initialize() {
 function handleMove(evt) {
     const idx = parseInt(evt.target.id.replace('slot-', ''));
     
-    // Check if:
-    // - Didn't click <div> in grid
-    // - Square already taken
-    // - Game is over
     if (isNaN(idx) || board[idx] || winner) return;
     
     // Update state (board, turn, winner)
@@ -93,6 +86,18 @@ function handleMove(evt) {
 }
 
 function computerMove() {
+
+    shuffle(winningCombos);
+
+    // With a 20% chance, make a random move
+    if (Math.random() < 0.1) {
+        let availableMoves = board.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+        if (availableMoves.length) {
+            let randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            board[randomMove] = -1;
+            return;
+        }
+    }
     // Check if computer can win
     for (let i = 0; i < winningCombos.length; i++) {
         if (checkCombo(winningCombos[i], -1)) {
@@ -147,20 +152,25 @@ function checkCombo(combo, player) {
     return false;
 }
 
+// Shuffle function
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+
 function render() {
     title.textContent = "There's no winner yet!";
     renderBoard();
     renderMessage();
-    // Hide/show PLAY AGAIN button
-    // playAgainBtn.disabled = !winner;
 }
 
 function renderBoard() {
     board.forEach(function(sqVal, idx) {
       const squareEl = document.getElementById(`slot-${idx}`);
       squareEl.innerHTML = `<div class="user-input-X text-color">${LOOKUP_TABLE[sqVal] ?? ''}</div>`
-      // Add class if square available for hover effect
-      squareEl.className = !sqVal ? 'avail' : '';
     });
   }
 
@@ -175,10 +185,13 @@ function getWinner() {
 function renderMessage() {
     if (winner === 'T') {
         title.innerHTML = "It's a tie!";
+        playAgainButton.hidden = false;
     } else if (winner) {
+        playAgainButton.hidden = false;
         title.innerHTML = `<span>${LOOKUP_TABLE[winner]} Won</span>!`;
     } else {
         title.innerHTML = `<span>${LOOKUP_TABLE[turn]}</span>'s Turn`;
+        playAgainButton.hidden = true;
     }
   }
 // initialization
